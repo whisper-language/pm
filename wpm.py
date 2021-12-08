@@ -6,12 +6,19 @@ import os
 import configparser
 
 version="0.1.0"
-globle_ini=os.environ.get('WPM_HOME',"~/wpm.ini");
+if os.name == 'nt':
+    globle_ini=os.environ.get('USERPROFILE')+"\.wpm.ini"
+else:
+    globle_ini=os.environ.get('WPM_HOME',"~/wpm.ini")
 
-conf=configparser.ConfigParser();
+conf=configparser.ConfigParser()
 
-conf.read("./wpm.ini",encoding="utf-8")
-
+file_exists = os.path.exists(globle_ini)
+if  file_exists :
+    conf.read(globle_ini,encoding="utf-8")
+else:
+    print("使用默认配置文件")
+    conf.read("./wpm.ini",encoding="utf-8")
 
 def print_version():
     print("wpm version:"+version)
@@ -48,7 +55,7 @@ def wpm_parse(argv):
             if len(kv)>1:
                 print("设置:",arg)
                 conf.set("default",kv[0],kv[1])
-                with open('./wpm.ini', 'w') as configfile:
+                with open(globle_ini, 'w') as configfile:
                     conf.write(configfile)
             else:
                 print("参数:"+conf.get("default",kv[0]))
