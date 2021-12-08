@@ -1,0 +1,12 @@
+{
+    "name":"项目名称",
+    "version":"0.1.0",
+    "dependency":{
+        "author/component1":"1.0.1",
+        "author/component2":"1.0.1"
+    },
+    "script":{
+        "test":"echo  执行测试脚本",
+        "installed":"echo 安装之后执行的脚本"
+    }
+}
