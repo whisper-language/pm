@@ -4,6 +4,7 @@ import getopt
 import sys
 import os
 import configparser
+import json
 
 version="0.1.0"
 if os.name == 'nt':
@@ -39,15 +40,51 @@ def help():
 	version							打印版本信息
     """)
 
+def runscript(arg):
+    with open('./wpm.json','r',encoding='utf8')as wpm_config:
+        json_data = json.load(wpm_config)
+        os.system(json_data["script"][arg])
+
+
+def installDependency(arg):
+    with open('./wpm.json','r',encoding='utf8')as wpm_config:
+        json_data = json.load(wpm_config)
+        dependencys=json_data["dependency"]
+        for d in dependencys:
+            print("install:"+d+"  version"+dependencys[d]);
+        
+def initproject():
+    with open("./wpm.json", 'w') as wpm_config:
+        wpm_config.write("""{
+    "name":"name",
+    "description":"",
+    "license":"",
+    "author":"username",
+    "version":"0.1.0",
+    "dependency":{
+    },
+    "script":{
+        "test":"echo 'test'"
+    }
+}""")
+        wpm_config.close()
+
+
 def wpm_parse(argv):
     try:
-        opts, args=getopt.getopt(argv,'hiustc:v',["help","init","update","search","install","uninstall","tidy","run","config=","version"])
+        opts, args=getopt.getopt(argv,'hiustr:c:v',["help","init","update","search","install","uninstall","tidy","run","config=","version"])
     except getopt.GetOptError:
         print("参数解析错误")
         help()
     for opt, arg in opts:
         if opt in ("-h","--help"):
             help()
+        elif opt in ("--init"):
+            initproject()
+        elif opt in ("-i","--install"):
+            installDependency(arg)
+        elif opt in ("-r","--run"):
+            runscript(arg)
         elif opt in ("-v","--version"):
             print_version()
         elif opt in ("-c","--config"):              
@@ -60,6 +97,8 @@ def wpm_parse(argv):
             else:
                 print("参数:"+conf.get("default",kv[0]))
             pass
+        else:
+            print("未知的命令"+opt)
             
             
 
