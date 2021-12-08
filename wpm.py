@@ -2,15 +2,16 @@
 
 import getopt
 import sys
+import os
+import configparser
 
-version = '1.0'
-verbose = False
-output_filename = 'default.out'
+globle_ini=os.environ.get('WPM_HOME',"~/wpm.ini");
 
-print(sys.argv[1:])
-
-
+conf=configparser.ConfigParser();
 
 
+conf.read("./wpm.ini",encoding="utf-8")
 
+
+print(conf.get("default","version"));
 
