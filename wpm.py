@@ -34,7 +34,7 @@ def help():
 
 def wpm_parse(argv):
     try:
-        opts, args=getopt.getopt(argv,'hiustcv',["help","init","update","search","install","uninstall","tidy","run","config","version"])
+        opts, args=getopt.getopt(argv,'hiustc:v',["help","init","update","search","install","uninstall","tidy","run","config=","version"])
     except getopt.GetOptError:
         print("参数解析错误")
         help()
@@ -43,6 +43,18 @@ def wpm_parse(argv):
             help()
         elif opt in ("-v","--version"):
             print_version()
+        elif opt in ("-c","--config"):              
+            kv=arg.split("=")
+            if len(kv)>1:
+                print("设置:",arg)
+                conf.set("default",kv[0],kv[1])
+                with open('./wpm.ini', 'w') as configfile:
+                    conf.write(configfile)
+            else:
+                print("参数:"+conf.get("default",kv[0]))
+            pass
+            
+            
 
 
 if __name__ =="__main__":
