@@ -6,9 +6,14 @@
     "version":"0.1.0",
     "dependency":{
         "aaa/aaa":"v0.0.1",
-        "aaa/bbb":"v0.0.1"
+        "aaa/bbb":"v0.0.1",
+        "aaa/ccc":"v0.0.1",
+        "aaa/ddd":"v0.0.1",
+        "aaa/eee":"v0.0.1",
+        "aaa/fff":"v0.0.1"
     },
     "script":{
-        "test":"echo 'test'"
+        "test":"echo 'test'",
+        "install_after":"echo install_after"
     }
 }

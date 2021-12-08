@@ -43,7 +43,8 @@ def help():
 def runscript(arg):
     with open('./wpm.json','r',encoding='utf8')as wpm_config:
         json_data = json.load(wpm_config)
-        os.system(json_data["script"][arg])
+        if arg in json_data["script"]:
+            os.system(json_data["script"][arg])
 
 
 def installDependency(arg):
@@ -52,6 +53,7 @@ def installDependency(arg):
         dependencys=json_data["dependency"]
         for d in dependencys:
             print("download: "+conf.get("default","global_repo")+"/"+d+"/"+dependencys[d]);
+        runscript("install_after")
         
 def initproject():
     with open("./wpm.json", 'w') as wpm_config:
