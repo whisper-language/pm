@@ -51,7 +51,7 @@ def installDependency(arg):
         json_data = json.load(wpm_config)
         dependencys=json_data["dependency"]
         for d in dependencys:
-            print("install:"+d+"  version"+dependencys[d]);
+            print("download: "+conf.get("default","global_repo")+"/"+d+"/"+dependencys[d]);
         
 def initproject():
     with open("./wpm.json", 'w') as wpm_config:

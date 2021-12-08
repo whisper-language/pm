@@ -1,0 +1,14 @@
+{
+    "name":"name",
+    "description":"",
+    "license":"",
+    "author":"username",
+    "version":"0.1.0",
+    "dependency":{
+        "aaa/aaa":"v0.0.1",
+        "aaa/bbb":"v0.0.1"
+    },
+    "script":{
+        "test":"echo 'test'"
+    }
+}
