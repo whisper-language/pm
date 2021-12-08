@@ -1,7 +1,0 @@
-{
-    "version":1,
-    "local_repo":"./wpm_repositories",
-    "global_repo":{
-       "main":"http://repo.wpm.com"
-    }
-}
