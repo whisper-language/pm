@@ -1,0 +1,3 @@
+[submodule "wpm-server"]
+	path = wpm-server
+	url = git@github.com:whisper-language/wpm-server.git
