@@ -14,6 +14,6 @@
     },
     "script":{
         "test":"echo 'test'",
-        "install_after":"echo install_after"
+        "install_after":"echo 安装完成后执行xxxxxxxxxxx"
     }
 }

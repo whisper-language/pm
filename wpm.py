@@ -29,9 +29,9 @@ def help():
     wpm  command <options>      
 	init 							初始化一个项目
 	update  						更新项目依赖
-	search <package_name>  					搜索指定依赖包
-	install <package_name>  				安装指定依赖包
-	uninstall <package_name> 				卸载指定依赖包
+	search <package_name>  			搜索指定依赖包
+	install <package_name>  		安装指定依赖包
+	uninstall <package_name> 		卸载指定依赖包
 	tidy							清理无用的依赖
 	run 							运行指定 wpn 脚本
 	config get k 						获取指定配置
