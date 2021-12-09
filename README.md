@@ -24,12 +24,11 @@ wpm  command <options>
 	version							打印版本信息
 ```
 
-
-
 ## 创建 whisper 项目
 ```
 wpm --init <package_name>
 ```
+
 ## 更新 wpm 项目
 ```
 wpm --update
@@ -44,14 +43,17 @@ wpm --search <package_name>
 ```
 wpm --install <package_name>  -g
 ```
+
 ## 执行 wpm 命令
 ```
 wpm --uninstall <package_name>  -g
 ```
+
 ## 清理 wpm 命令 删除无用的 依赖包
 ```
 wpm --tidy
 ```
+
 ## 执行 wpm 命令
 ```
 wpm --run  <name>
@@ -61,7 +63,8 @@ wpm --run  <name>
 ```
 wpm --config get k
 ```
+
 ## 设置wpm配置
 ```
-wpm --config set k v
+wpm --config set k=v
 ```
