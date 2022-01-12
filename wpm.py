@@ -34,8 +34,8 @@ def help():
 	uninstall <package_name> 		卸载指定依赖包
 	tidy							清理无用的依赖
 	run 							运行指定 wpn 脚本
-	config get k 						获取指定配置
-	config set k v		 				修改指定配置
+	config get k 					获取指定配置
+	config set k v		 			修改指定配置
 	help							打印帮助信息
 	version							打印版本信息
     """)
