@@ -5,11 +5,8 @@
     "author":"username",
     "version":"0.1.0",
     "dependency":{
-        "aaa/aaa":"0.0.1",
-        "aaa/bbb":"0.0.1"
     },
     "script":{
-        "test":"echo 'test'",
-        "install_after":"echo 安装完成后执行xxxxxxxxxxx"
+        "test":"echo 'test'"
     }
 }

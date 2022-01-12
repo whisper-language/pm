@@ -5,21 +5,21 @@ import sys
 import os
 import configparser
 import json
+import requests
+from pathlib import Path
+import zipfile
 
 version="0.1.0"
-if os.name == 'nt':
-    globle_ini=os.environ.get('USERPROFILE')+"\.wpm.ini"
-else:
-    globle_ini=os.environ.get('WPM_HOME',"~/wpm.ini")
-
 conf=configparser.ConfigParser()
 
-file_exists = os.path.exists(globle_ini)
-if  file_exists :
-    conf.read(globle_ini,encoding="utf-8")
-else:
-    print("使用默认配置文件")
-    conf.read("./wpm.ini",encoding="utf-8")
+def resolve_wpm_ini():
+    home_ini=os.environ['WPM_HOME'];
+    print("WPM_HOME: "+home_ini);
+    if  os.path.exists(home_ini) :
+        conf.read(home_ini+"/wpm.ini",encoding="utf-8")
+    else:
+       print("WPM_HOME 不存在")
+
 
 def print_version():
     print("wpm version:"+version)
@@ -50,10 +50,22 @@ def runscript(arg):
 def installDependency(arg):
     with open('./wpm.json','r',encoding='utf8')as wpm_config:
         json_data = json.load(wpm_config)
-        dependencys=json_data["dependency"]
+        dependencys=json_data["dependency"] 
         for d in dependencys:
-            print("download: "+conf.get("default","global_repo")+"/"+d+"/"+dependencys[d]);
-        runscript("install_after")
+            url=conf.get("default","global_repo")+"/"+d+"/"+dependencys[d];
+            print("DOWNLOAD: "+url)
+            res=requests.get(url)
+            # 写入文件
+            vender_path="./vendor/"+d+"/"+dependencys[d];
+            Path(vender_path).mkdir(parents=True, exist_ok=True)
+            tgzfile=vender_path+'/code.zip'
+            with open(tgzfile,'wb') as fd:
+                fd.write(res.content)
+                fd.close()
+                with zipfile.ZipFile(tgzfile) as zf:
+                    zf.extractall(vender_path)
+                    zf.close()
+                    os.remove(tgzfile)                
         
 def initproject():
     with open("./wpm.json", 'w') as wpm_config:
@@ -101,9 +113,7 @@ def wpm_parse(argv):
             pass
         else:
             print("未知的命令"+opt)
-            
-            
-
 
 if __name__ =="__main__":
+    resolve_wpm_ini();
     wpm_parse(sys.argv[1:])
