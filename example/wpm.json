@@ -1,9 +1,10 @@
 {
-    "name":"name",
+    "name":"test",
     "description":"",
     "license":"",
-    "author":"username",
-    "version":"0.1.0",
+    "author":"jingdor",
+    "version":"0.0.1",
+    "repo":"http://www.baidu.com",
     "dependency":{
         "aaa/aaa":"0.0.1",
         "aaa/bbb":"0.0.1"

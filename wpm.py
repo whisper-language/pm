@@ -9,6 +9,9 @@ import requests
 from pathlib import Path
 import zipfile
 import json
+from zipfile import ZipFile
+from os.path import basename
+
 
 version="0.1.0"
 conf=configparser.ConfigParser()
@@ -30,6 +33,7 @@ def help():
     wpm  command <options>      
 	init 							初始化一个项目
 	update  						更新项目依赖
+    upload  						发布项目到当前仓库
 	search <package_name>  			搜索指定依赖包
 	install <package_name>  		安装指定依赖包
 	uninstall <package_name> 		卸载指定依赖包
@@ -46,7 +50,6 @@ def runscript(arg):
         json_data = json.load(wpm_config)
         if arg in json_data["script"]:
             os.system(json_data["script"][arg])
-
 
 def installDependency(arg):
     with open('./wpm.json','r',encoding='utf8')as wpm_config:
@@ -72,6 +75,41 @@ def installDependency(arg):
                     zf.extractall(vender_path)
                     zf.close()
                     os.remove(tgzfile)                
+
+def zip(source,distFilename,zipObj):
+        for folderName, subfolders, filenames in os.walk("."):
+                for filename in filenames:
+                    #create complete filepath of file in directory
+                    if  filename=="vendor" or filename=="upload.zip" :
+                        continue
+                    filePath = os.path.join(folderName, filename)
+                    # Add file to zip
+                    isFile = os.path.isfile(filePath)
+                    if isFile==False:
+                        print("xxx");
+                    else:      
+                        print("ADD "+filePath+" basename"+basename(filePath));
+                        zipObj.write(filePath)    
+def upload(arg):
+    print("上传文件到仓库");
+    with open('./wpm.json','r',encoding='utf8')as wpm_config:
+        json_data = json.load(wpm_config)
+        url=conf.get("default","publish_repo")+"/"+json_data['author']+"/"+json_data['name']+"/"+json_data["version"];
+        print("UPLOAD: "+url)
+        with ZipFile('upload.zip', 'w') as zipObj:
+            zip(".","upload.zip",zipObj)
+        print("ZIP "+"upload.zip");
+        with open('upload.zip', 'rb') as f:
+            files = {'file': f,"wpm.json":wpm_config}
+            res=requests.post(url,files=files,data={
+                "repo":json_data['repo']
+            });
+            resData=json.loads(res.content)
+            if resData['code']==-1:
+                print("ERROR:"+" "+ resData['msg']);
+                return;
+            else:
+                 print("SUCCESS");
         
 def initproject():
     with open("./wpm.json", 'w') as wpm_config:
@@ -92,7 +130,7 @@ def initproject():
 
 def wpm_parse(argv):
     try:
-        opts, args=getopt.getopt(argv,'hiustr:c:v',["help","init","update","search","install","uninstall","tidy","run","config=","version"])
+        opts, args=getopt.getopt(argv,'hiustr:c:v',["help","init","update","search","install","upload","uninstall","tidy","run","config=","version"])
     except getopt.GetOptError:
         print("参数解析错误")
         help()
@@ -103,6 +141,8 @@ def wpm_parse(argv):
             initproject()
         elif opt in ("-i","--install"):
             installDependency(arg)
+        elif opt in ("-u","--upload"):
+            upload(arg)
         elif opt in ("-r","--run"):
             runscript(arg)
         elif opt in ("-v","--version"):
