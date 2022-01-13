@@ -5,6 +5,10 @@
     "author":"jingdor",
     "version":"0.0.1",
     "repo":"http://www.baidu.com",
+    "publish":{
+        "access":"PUBLIC",
+        "publish":"DEV"
+    },
     "dependency":{
         "aaa/aaa":"0.0.1",
         "aaa/bbb":"0.0.1"
