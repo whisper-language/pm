@@ -8,6 +8,7 @@ import json
 import requests
 from pathlib import Path
 import zipfile
+import json
 
 version="0.1.0"
 conf=configparser.ConfigParser()
@@ -55,6 +56,11 @@ def installDependency(arg):
             url=conf.get("default","global_repo")+"/"+d+"/"+dependencys[d];
             print("DOWNLOAD: "+url)
             res=requests.get(url)
+            if res.headers['Content-Type']=='application/json':
+                resData=json.loads(res.content)
+                if resData['code']==-1:
+                    print("ERROR:"+" "+ d +" version:"+dependencys[d]+" "+resData['msg']);
+                return;
             # 写入文件
             vender_path="./vendor/"+d+"/"+dependencys[d];
             Path(vender_path).mkdir(parents=True, exist_ok=True)
