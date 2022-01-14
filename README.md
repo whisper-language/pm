@@ -12,6 +12,8 @@ wpm help
 ```
 wpm  command <options>
 	init 							初始化一个项目
+	clean							删除所有依赖
+	package							打包到一个压缩文件
 	update  						更新项目依赖
 	search <package_name>  					搜索指定依赖包
 	install <package_name>  				安装指定依赖包

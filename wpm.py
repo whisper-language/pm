@@ -11,14 +11,14 @@ import zipfile
 import json
 from zipfile import ZipFile
 from os.path import basename
-
+import shutil
 
 version="0.1.0"
 conf=configparser.ConfigParser()
+home_ini=os.environ['WPM_HOME'];
+print("WPM_HOME: "+home_ini);
 
-def resolve_wpm_ini():
-    home_ini=os.environ['WPM_HOME'];
-    print("WPM_HOME: "+home_ini);
+def resolve_wpm_ini():   
     if  os.path.exists(home_ini) :
         conf.read(home_ini+"/wpm.ini",encoding="utf-8")
     else:
@@ -77,10 +77,10 @@ def installDependency(arg):
                     os.remove(tgzfile)                
 
 def zip(source,distFilename,zipObj):
-        for folderName, subfolders, filenames in os.walk("."):
+        for folderName, subfolders, filenames in os.walk(source):
                 for filename in filenames:
                     #create complete filepath of file in directory
-                    if  filename=="vendor" or filename=="upload.zip" :
+                    if  filename=="vendor" or filename==distFilename :
                         continue
                     filePath = os.path.join(folderName, filename)
                     # Add file to zip
@@ -88,28 +88,42 @@ def zip(source,distFilename,zipObj):
                     if isFile==False:
                         print("xxx");
                     else:      
-                        print("ADD "+filePath+" basename"+basename(filePath));
-                        zipObj.write(filePath)    
-def upload(arg):
-    print("上传文件到仓库");
+                        print("ADD "+filePath);
+                        zipObj.write(filePath)  
+def clean(arg):
+    print("CLEAN "+"upload.zip");
+    shutil.rmtree('./vendor');
+
+def package(arg):
     with open('./wpm.json','r',encoding='utf8')as wpm_config:
+        # 打包
         json_data = json.load(wpm_config)
         url=conf.get("default","publish_repo")+"/"+json_data['author']+"/"+json_data['name']+"/"+json_data["version"];
-        print("UPLOAD: "+url)
+        print("PACKAGE "+"upload.zip");
         with ZipFile('upload.zip', 'w') as zipObj:
             zip(".","upload.zip",zipObj)
-        print("ZIP "+"upload.zip");
+
+          
+def upload(arg):
+    with open('./wpm.json','r',encoding='utf8')as wpm_config:
+        # 打包
+        json_data = json.load(wpm_config)
+        url=conf.get("default","publish_repo")+"/"+json_data['author']+"/"+json_data['name']+"/"+json_data["version"];
+        file_size = os.stat("upload.zip")
+        print("UPLOAD: "+url+" size:"+str(file_size.st_size))
         with open('upload.zip', 'rb') as f:
             files = {'file': f,"wpm.json":wpm_config}
-            res=requests.post(url,files=files,data={
-                "repo":json_data['repo']
-            });
+            res=requests.post(url,files=files,data=json_data["publish"]);
+            f.close();  
             resData=json.loads(res.content)
             if resData['code']==-1:
                 print("ERROR:"+" "+ resData['msg']);
                 return;
             else:
-                 print("SUCCESS");
+                print("SUCCESS");
+            
+            os.remove("upload.zip"); 
+            
         
 def initproject():
     with open("./wpm.json", 'w') as wpm_config:
@@ -130,9 +144,9 @@ def initproject():
 
 def wpm_parse(argv):
     try:
-        opts, args=getopt.getopt(argv,'hiustr:c:v',["help","init","update","search","install","upload","uninstall","tidy","run","config=","version"])
+        opts, args=getopt.getopt(argv,'hiustr:c:v',["help","init","clean","package","update","search","install","upload","uninstall","tidy","run","config=","version"])
     except getopt.GetOptError:
-        print("参数解析错误")
+        print("PARAMS PARSE ERROR")
         help()
     for opt, arg in opts:
         if opt in ("-h","--help"):
@@ -142,7 +156,12 @@ def wpm_parse(argv):
         elif opt in ("-i","--install"):
             installDependency(arg)
         elif opt in ("-u","--upload"):
+            package(arg);
             upload(arg)
+        elif opt in ("-u","--clean"):
+            clean(arg)
+        elif opt in ("-p","--package"):
+            package(arg)
         elif opt in ("-r","--run"):
             runscript(arg)
         elif opt in ("-v","--version"):
@@ -150,9 +169,9 @@ def wpm_parse(argv):
         elif opt in ("-c","--config"):              
             kv=arg.split("=")
             if len(kv)>1:
-                print("设置:",arg)
+                print("SET:",arg)
                 conf.set("default",kv[0],kv[1])
-                with open(globle_ini, 'w') as configfile:
+                with open(home_ini+"/wpm.ini", 'w') as configfile:
                     conf.write(configfile)
             else:
                 print("参数:"+conf.get("default",kv[0]))

@@ -10,8 +10,7 @@
         "publish":"DEV"
     },
     "dependency":{
-        "aaa/aaa":"0.0.1",
-        "aaa/bbb":"0.0.1"
+        "jingdor/test":"0.0.1"
     },
     "script":{
         "test":"echo 'test'",
